@@ -1,0 +1,28 @@
+version: "3.2"
+
+services:
+  api:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_SCHEMA: face_be
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - db
+    volumes:
+      -  ./scripts/wait-for-mysql.sh:/wait-for-mysql.sh
+    command: /bin/sh /wait-for-mysql.sh python run.py
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: face_be
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+    ports:
+      - 3306:3306
