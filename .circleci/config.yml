@@ -6,16 +6,16 @@ jobs:
         environment:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
-          DB_SCHEMA: face_be
+          DB_SCHEMA: circle_test
           DB_USER: ubuntu
-          DB_PASSWORD: ubuntu
+          CIRCLE: yes
       - image: circleci/mysql:8.0.4
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_ROOT_HOST: "%"
           MYSQL_USER: ubuntu
           MYSQL_PASSWORD: ubuntu
-          MYSQL_DATABASE: face_be
+          MYSQL_DATABASE: circle_test
     steps:
       - checkout
       - run:
