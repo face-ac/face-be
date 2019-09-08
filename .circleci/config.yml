@@ -13,6 +13,7 @@ jobs:
         environment:
           MYSQL_DATABASE: face_be
           MYSQL_USER: root_test
+          MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
     steps:
       - checkout
