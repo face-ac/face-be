@@ -35,13 +35,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    circle = os.environ.get("CIRCLE", "no")
-    if circle == "yes":
-        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}@{}/{}".format(
-            Config.DB_USER, Config.DB_HOST, Config.DB_SCHEMA
-        )
-    else:
-        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}/{}".format(
-            Config.DB_USER, Config.DB_PASSWORD, Config.DB_HOST, Config.DB_SCHEMA
-        )
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}/{}".format(
+        Config.DB_USER, Config.DB_PASSWORD, Config.DB_HOST, Config.DB_SCHEMA
+    )
     SQLALCHEMY_ECHO = False
