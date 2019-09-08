@@ -7,13 +7,13 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_SCHEMA: face_be
-          DB_USER: root
-          DB_PASSWORD: root
+          DB_USER: root_test
+          DB_PASSWORD: password
       - image: circleci/mysql:8.0.4
         environment:
           MYSQL_DATABASE: face_be
-          MYSQL_ROOT_HOST: "%"
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: root_test
+          MYSQL_ROOT_PASSWORD: password
     steps:
       - checkout
       - run:
