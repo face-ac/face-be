@@ -1,10 +1,6 @@
 Face-BE
 
-To Run on the web, go to http://x.herokuapp.com/login  
-
-User Name: test
-
-Password: test
+Lives at http://face-be.herokuapp.com/api 
 
 ###To run locally:
 
@@ -27,11 +23,8 @@ nose2 -v
 ```
 
 ###Using Docker
-Build with docker: 
+Build with docker-compose: 
 ```
-git clone
-cd face-be
-
 # Start
 docker-compose up
 
