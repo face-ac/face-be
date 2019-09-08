@@ -1,4 +1,5 @@
 Face-BE
+[![CircleCI](https://circleci.com/gh/face-ac/face-be/tree/master.svg?style=svg)](https://circleci.com/gh/face-ac/face-be/tree/master)
 
 Lives at http://face-be.herokuapp.com/api 
 
