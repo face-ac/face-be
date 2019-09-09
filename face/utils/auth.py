@@ -40,7 +40,8 @@ def _validate_jwt(headers):
     if authorization is None:
         raise AuthRequired
     try:
-        JWT(jwt.decode(authorization, JWT_SECRET, algorithms=[JWT_ALGORITHM]))
+        token_arr = authorization.split(" ")
+        JWT(jwt.decode(token_arr[1], JWT_SECRET, algorithms=[JWT_ALGORITHM]))
     except jwt.DecodeError:
         raise DecodeError
     except jwt.ExpiredSignatureError:

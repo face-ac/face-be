@@ -14,11 +14,6 @@ from face.utils import responses as resp
 user_api = Blueprint("user_api", __name__)
 
 
-"""
-USER
-"""
-
-
 @user_api.route("/user", methods=["POST"])
 def create_user():
     try:
@@ -42,8 +37,7 @@ def login():
             data["password"], fetched.password if fetched else None
         )
         if not valid_password:
-            val = {"message": "Invalid credentials."}
-            return response_with(resp.BAD_REQUEST_400, value=val)
+            return response_with(resp.INVALID_INPUT_422)
 
         user_schema = UserSchema()
         user, error = user_schema.dump(fetched)
@@ -58,25 +52,7 @@ def login():
 @authenticate_jwt
 def get_user_details(uid):
     try:
-        user = User.query.filter_by(id=uid).first()
-        if not user:
-            message = notFound.format("User")
-            return response_with(resp.NOT_FOUND_HANDLER_404, message=message)
-
-        user_schema = UserSchema()
-        user_data, error = user_schema.dump(user)
-
-        val = {
-            "id": user_data["id"],
-            "name": user_data["name"],
-            "surname": user_data["surname"],
-            "email": user_data["email"],
-            "login": user_data["login"],
-            "created": user_data["created"],
-            "updated": user_data["updated"],
-        }
-
-        return response_with(resp.SUCCESS_200, value=val)
+        return get_user(uid)
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
@@ -126,3 +102,36 @@ def update_user(uid):
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
+
+
+@user_api.route("/validate", methods=["GET"])
+@authenticate_jwt
+def validate():
+    try:
+        uid = JWT.details["user_id"]
+        return get_user(uid)
+    except Exception as e:
+        logging.error(e)
+        return response_with(resp.SERVER_ERROR_500)
+
+
+def get_user(uid):
+    user = User.query.filter_by(id=uid).first()
+    if not user:
+        error = notFound.format("User")
+        return response_with(resp.NOT_FOUND_HANDLER_404, error)
+
+    user_schema = UserSchema()
+    user_data, error = user_schema.dump(user)
+
+    val = {
+        "id": user_data["id"],
+        "firstName": user_data["name"],
+        "lastName": user_data["surname"],
+        "email": user_data["email"],
+        "login": user_data["login"],
+        "created": user_data["created"],
+        "updated": user_data["updated"],
+    }
+
+    return response_with(resp.SUCCESS_200, value={"user": val})

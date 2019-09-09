@@ -8,11 +8,11 @@ class AuthRequired(Exception):
 
     def __init__(self):
         Exception.__init__(self)
-        self.message = required.format("Authorization")
+        self.error = required.format("Authorization")
 
     def to_dict(self):
         rv = dict()
-        rv["message"] = self.message
+        rv["error"] = self.error
         return rv
 
 
@@ -23,11 +23,11 @@ class DecodeError(Exception):
 
     def __init__(self):
         Exception.__init__(self)
-        self.message = invalid.format("Authorization")
+        self.error = invalid.format("Authorization")
 
     def to_dict(self):
         rv = dict()
-        rv["message"] = self.message
+        rv["error"] = self.error
         return rv
 
 
@@ -38,11 +38,11 @@ class ExpiredSignatureError(Exception):
 
     def __init__(self):
         Exception.__init__(self)
-        self.message = expired.format("Authorization")
+        self.error = expired.format("Authorization")
 
     def to_dict(self):
         rv = dict()
-        rv["message"] = self.message
+        rv["error"] = self.error
         return rv
 
 
@@ -53,9 +53,9 @@ class BaseJWTError(Exception):
 
     def __init__(self):
         Exception.__init__(self)
-        self.message = expired.format("Authorization")
+        self.error = expired.format("Authorization")
 
     def to_dict(self):
         rv = dict()
-        rv["message"] = self.message
+        rv["error"] = self.error
         return rv

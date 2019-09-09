@@ -50,22 +50,22 @@ def create_app(config):
     @app.errorhandler(AuthRequired)
     def auth_required(e):
         logging.error(e)
-        return response_with(resp.UNAUTHORIZED_403, message=e.message)
+        return response_with(resp.UNAUTHORIZED_403, error=e.error)
 
     @app.errorhandler(DecodeError)
     def decode_error(e):
         logging.error(e)
-        return response_with(resp.UNAUTHORIZED_403, message=e.message)
+        return response_with(resp.UNAUTHORIZED_403, error=e.error)
 
     @app.errorhandler(ExpiredSignatureError)
     def expired_error(e):
         logging.error(e)
-        return response_with(resp.UNAUTHORIZED_403, message=e.message)
+        return response_with(resp.UNAUTHORIZED_403, error=e.error)
 
     @app.errorhandler(BaseJWTError)
     def base_jwt_error(e):
         logging.error(e)
-        return response_with(resp.UNAUTHORIZED_403, message=e.message)
+        return response_with(resp.UNAUTHORIZED_403, error=e.error)
 
     # END GLOBAL HTTP CONFIGURATIONS
 
