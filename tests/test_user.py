@@ -30,9 +30,9 @@ class TestUser(BaseTestCase):
         response = self.app.post(
             "/api/user", data=json.dumps(user), content_type="application/json"
         )
-        data = json.loads(response.data)
+        json_res = json.loads(response.data)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("user" in data)
+        self.assertTrue("user" in json_res["data"])
         self.users.append(user)
 
     def test_login_invalid(self):
@@ -40,15 +40,15 @@ class TestUser(BaseTestCase):
         response = self.app.post(
             "/api/login", data=json.dumps(login), content_type="application/json"
         )
-        data = json.loads(response.data)
-        self.assertEqual(400, response.status_code)
-        self.assertTrue("message" in data)
+        json_res = json.loads(response.data)
+        self.assertEqual(422, response.status_code)
+        self.assertTrue("error" in json_res)
 
     def test_login_valid(self):
         login = {"login": self.users[0]["login"], "password": self.users[0]["password"]}
         response = self.app.post(
             "/api/login", data=json.dumps(login), content_type="application/json"
         )
-        data = json.loads(response.data)
+        json_res = json.loads(response.data)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("user" in data)
+        self.assertTrue("user" in json_res["data"])
