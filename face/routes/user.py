@@ -7,7 +7,7 @@ from flask import request
 from sqlalchemy.exc import IntegrityError
 from face.db.models.user import UserSchema, User
 from face.utils.auth import authenticate_jwt, generate_jwt, JWT
-from face.utils.constants import notFound, permission, required, exists
+from face.utils.constants import notFound, permission, required, exists, invalid
 from face.utils.responses import response_with
 from face.utils import responses as resp
 
@@ -32,12 +32,16 @@ def login():
     try:
         data = request.get_json()
         fetched = User.query.filter_by(login=data["login"]).first()
+        if not fetched:
+            e = notFound.format("User")
+            return response_with(resp.INVALID_INPUT_422, error=e)
 
         valid_password = User.validate_password(
-            data["password"], fetched.password if fetched else None
+            data["password"], fetched.password
         )
         if not valid_password:
-            return response_with(resp.INVALID_INPUT_422)
+            e = invalid.format("Password")
+            return response_with(resp.INVALID_INPUT_422, error=e)
 
         user_schema = UserSchema()
         user, error = user_schema.dump(fetched)
@@ -52,7 +56,7 @@ def login():
 @authenticate_jwt
 def get_user_details(uid):
     try:
-        return get_user(uid)
+        return _get_user(uid)
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
@@ -66,39 +70,39 @@ def update_user(uid):
 
         name = data.get("name")
         if not name:
-            message = required.format("Name")
-            return response_with(resp.MISSING_PARAMETERS_422, message=message)
+            e = required.format("Name")
+            return response_with(resp.MISSING_PARAMETERS_422, error=e)
 
         surname = data.get("surname")
         if not surname:
-            message = required.format("Surname")
-            return response_with(resp.MISSING_PARAMETERS_422, message=message)
+            e = required.format("Surname")
+            return response_with(resp.MISSING_PARAMETERS_422, error=e)
 
         email = data.get("email")
         if not email:
-            message = required.format("Email")
-            return response_with(resp.MISSING_PARAMETERS_422, message=message)
+            e = required.format("Email")
+            return response_with(resp.MISSING_PARAMETERS_422, error=e)
 
         # validate user exists
         user = User.query.filter_by(id=uid).first()
         if not user:
-            message = notFound.format("User")
-            return response_with(resp.NOT_FOUND_HANDLER_404, message=message)
+            e = notFound.format("User")
+            return response_with(resp.NOT_FOUND_HANDLER_404, error=e)
 
         # validate access to user
         access = User.query.filter_by(id=JWT.details["user_id"]).first()
         if not access:
-            message = permission
-            return response_with(resp.NOT_FOUND_HANDLER_404, message=message)
+            e = permission
+            return response_with(resp.NOT_FOUND_HANDLER_404, error=e)
 
         # update user
         user.update(name, surname, email)
 
         # response details
-        return get_user_details(uid)
+        return _get_user(uid)
     except IntegrityError:
-        message = exists.format("Name")
-        return response_with(resp.INVALID_INPUT_422, message=message)
+        e = exists.format("Name")
+        return response_with(resp.INVALID_INPUT_422, error=e)
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
@@ -109,20 +113,22 @@ def update_user(uid):
 def validate():
     try:
         uid = JWT.details["user_id"]
-        return get_user(uid)
+        return _get_user(uid)
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
 
 
-def get_user(uid):
+def _get_user(uid):
     user = User.query.filter_by(id=uid).first()
     if not user:
         error = notFound.format("User")
-        return response_with(resp.NOT_FOUND_HANDLER_404, error)
+        return response_with(resp.NOT_FOUND_HANDLER_404, error=error)
 
     user_schema = UserSchema()
     user_data, error = user_schema.dump(user)
+    if error:
+        return response_with(resp.SERVER_ERROR_500, error=error)
 
     val = {
         "id": user_data["id"],

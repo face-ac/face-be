@@ -11,7 +11,7 @@ healthcheck_api = Blueprint("healthcheck_api", __name__)
 @healthcheck_api.route("/healthcheck", methods=["GET"])
 def healthcheck():
     try:
-        return response_with(resp.SUCCESS_200, message="i'm alive")
+        return response_with(resp.SUCCESS_200, value={"message": "i'm alive"})
     except Exception as e:
         logging.error(e)
         return response_with(resp.SERVER_ERROR_500)
