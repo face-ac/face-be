@@ -36,9 +36,7 @@ def login():
             e = notFound.format("User")
             return response_with(resp.INVALID_INPUT_422, error=e)
 
-        valid_password = User.validate_password(
-            data["password"], fetched.password
-        )
+        valid_password = User.validate_password(data["password"], fetched.password)
         if not valid_password:
             e = invalid.format("Password")
             return response_with(resp.INVALID_INPUT_422, error=e)

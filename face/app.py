@@ -6,6 +6,7 @@ import sys
 from flask import Flask
 from flask_cors import CORS
 from face.db.config import db
+from face.routes.access import access_api
 from face.utils.exception import (
     AuthRequired,
     ExpiredSignatureError,
@@ -26,6 +27,7 @@ def create_app(config):
 
     app.register_blueprint(healthcheck_api, url_prefix="/api")
     app.register_blueprint(user_api, url_prefix="/api")
+    app.register_blueprint(access_api, url_prefix="/api")
 
     # START GLOBAL HTTP CONFIGURATIONS
     @app.after_request
