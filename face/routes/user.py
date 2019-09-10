@@ -68,12 +68,12 @@ def update_user(uid):
     try:
         data = request.get_json()
 
-        name = data.get("name")
+        name = data.get("firstName")
         if not name:
             e = required.format("Name")
             return response_with(resp.MISSING_PARAMETERS_422, error=e)
 
-        surname = data.get("surname")
+        surname = data.get("lastName")
         if not surname:
             e = required.format("Surname")
             return response_with(resp.MISSING_PARAMETERS_422, error=e)
@@ -82,6 +82,8 @@ def update_user(uid):
         if not email:
             e = required.format("Email")
             return response_with(resp.MISSING_PARAMETERS_422, error=e)
+
+        password = data.get("password")
 
         # validate user exists
         user = User.query.filter_by(id=uid).first()
@@ -96,7 +98,7 @@ def update_user(uid):
             return response_with(resp.NOT_FOUND_HANDLER_404, error=e)
 
         # update user
-        user.update(name, surname, email)
+        user.update(name, surname, email, password=password)
 
         # response details
         return _get_user(uid)

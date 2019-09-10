@@ -37,7 +37,7 @@ class User(db.Model):
             db.session.rollback()
             raise
 
-    def update(self, name, surname, email):
+    def update(self, name, surname, email, password=None):
         try:
             commit = False
             if name != self.name:
@@ -49,6 +49,10 @@ class User(db.Model):
             if email != self.email:
                 self.email = email
                 commit = True
+            if password:
+                self.password = self._hash(password)
+                commit = True
+
             if commit:
                 db.session.commit()
         except Exception as e:
