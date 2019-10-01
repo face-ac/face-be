@@ -29,6 +29,19 @@ class AccessPoint(db.Model):
             db.session.rollback()
             raise
 
+    def update(self, name):
+        try:
+            commit = False
+            if name != self.name:
+                self.name = name
+                commit = True
+            if commit:
+                db.session.commit()
+        except Exception as e:
+            logging.error(e)
+            db.session.rollback()
+            raise
+
 
 class AccessPointSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

@@ -6,7 +6,6 @@ import sys
 from flask import Flask
 from flask_cors import CORS
 from face.db.config import db
-from face.routes.access import access_api
 from face.utils.exception import (
     AuthRequired,
     ExpiredSignatureError,
@@ -16,6 +15,7 @@ from face.utils.exception import (
 from face.utils.responses import response_with
 import face.utils.responses as resp
 from face.routes.user import user_api
+from face.routes.access_point import access_point_api
 from face.routes.healthcheck import healthcheck_api
 
 
@@ -27,7 +27,7 @@ def create_app(config):
 
     app.register_blueprint(healthcheck_api, url_prefix="/api")
     app.register_blueprint(user_api, url_prefix="/api")
-    app.register_blueprint(access_api, url_prefix="/api")
+    app.register_blueprint(access_point_api, url_prefix="/api")
 
     # START GLOBAL HTTP CONFIGURATIONS
     @app.after_request
@@ -49,6 +49,7 @@ def create_app(config):
         logging.error(e)
         return response_with(resp.NOT_FOUND_HANDLER_404)
 
+    # JWT Errors
     @app.errorhandler(AuthRequired)
     def auth_required(e):
         logging.error(e)
@@ -68,7 +69,6 @@ def create_app(config):
     def base_jwt_error(e):
         logging.error(e)
         return response_with(resp.UNAUTHORIZED_403, error=e.error)
-
     # END GLOBAL HTTP CONFIGURATIONS
 
     db.init_app(app)
