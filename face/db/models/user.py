@@ -54,6 +54,7 @@ class User(db.Model):
                 commit = True
 
             if commit:
+                self.updated = db.func.now()
                 db.session.commit()
         except Exception as e:
             logging.error(e)

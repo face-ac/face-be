@@ -36,6 +36,7 @@ class AccessPoint(db.Model):
                 self.name = name
                 commit = True
             if commit:
+                self.updated = db.func.now()
                 db.session.commit()
         except Exception as e:
             logging.error(e)
