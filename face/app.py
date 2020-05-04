@@ -17,6 +17,7 @@ import face.utils.responses as resp
 from face.routes.user import user_api
 from face.routes.access_point import access_point_api
 from face.routes.healthcheck import healthcheck_api
+from face.routes.log import log_api
 
 
 def create_app(config):
@@ -28,6 +29,7 @@ def create_app(config):
     app.register_blueprint(healthcheck_api, url_prefix="/api")
     app.register_blueprint(user_api, url_prefix="/api")
     app.register_blueprint(access_point_api, url_prefix="/api")
+    app.register_blueprint(log_api, url_prefix="/api")
 
     # START GLOBAL HTTP CONFIGURATIONS
     @app.after_request
